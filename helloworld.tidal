@@ -1,0 +1,13 @@
+d1
+  $ n "[0 ~ 4 7, 2!8]"
+  # s "iacdriver"
+
+setcps $ 140 / 60 / 4
+
+d1 $ silence
+
+-- long kicks
+d2 $ ccv 100 # ccn 100 # s "iacdriver"
+
+-- short kicks
+d2 $ ccv 0 # ccn 100 # s "iacdriver"
