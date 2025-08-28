@@ -1,0 +1,107 @@
+-- really dig the way this sounds with an organ patch I've
+-- got running in bitwig
+-- basic starting point with euclidean pattern on one note
+d1
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(1,8)") -- a(3,8,2) f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+d1
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(2,8)") -- a(3,8,2) f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+d1
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(3,8)") -- a(3,8,2) f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- bring in a euclidean pattern on another note
+d1
+  $ n (off 0.25 (+12)
+       -- $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2)") -- f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- bring in a euclidean pattern on another note
+d1
+  $ n (off 0.25 (+12)
+       -- $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2) f(3,8)") -- e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- remove that last note, but add some more notes that are offset
+-- to the pattern with just two notes
+d1
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2)") -- f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- bring in a euclidean pattern on another note
+d1
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2) f(3,8)") -- e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- only one offset pattern, and euclidean pattern on 4 notes
+d1
+  $ n (off 0.25 (+12)
+       -- $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2) f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- two offset patterns, and euclidean pattern on 4 notes
+d1
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2) f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+-- two offset patterns, and euclidean pattern on 4 notes
+-- plus we transpose up an octave every 4 bars
+d1
+  $ every 3 (|+ n 12)
+  $ every 4 (|+ n 12)
+  $ n (off 0.25 (+12)
+       $ off 0.125 (+7)
+       $ slow 2 "c(3,8) a(3,8,2) f(3,8)? e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+d2 $ silence
+
+d2
+  $ s "iacdriver"
+  # ccv (segment 4096 $ slow 8 $ range 0 127 saw)
+  # ccn 102
+  # midichan 4
+
+-- turn the delay off
+once $ s "iacdriver" # ccv 0 # ccn 102 # midichan 4
+
+-- turn the delay on all the way
+once $ s "iacdriver" # ccv 127 # ccn 102 # midichan 4
+
+hush
+
+-- stop the notes
+d1 $ silence
+
+-- stop the delay mix modulation
+d2 $ silence
+
+setcps $ 150 / 60 / 4

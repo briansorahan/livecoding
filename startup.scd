@@ -14,6 +14,7 @@ s.reboot { // server options are only updated on reboot
 		~dirt.loadSoundFiles;   // load samples (path containing a wildcard can be passed in)
 		// for example: ~dirt.loadSoundFiles("/Users/myUserName/Dirt/samples/*");
 		// s.sync; // optionally: wait for samples to be read
+		~dirt.loadSoundFiles("/Users/brian.soraham/tidalcycles/samples-extra/*");
 		~dirt.start(57120, 0 ! 12);   // start listening on port 57120, create two busses each sending audio to channel 0
 
 		// optional, needed for convenient access from sclang:
@@ -26,9 +27,17 @@ s.reboot { // server options are only updated on reboot
 
 		// setup virtal MIDI bus (mac os x)
 		MIDIClient.init;
-		~midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
-		~dirt.soundLibrary.addMIDI(\iacdriver, ~midiOut);
-		~midiOut.latency = 0.45;
+
+		~iacDriver = MIDIOut.newByName("IAC Driver", "Bus 1");
+		try {
+			~opsix = MIDIOut.newByName("opsix", "Generic USB MIDI Sound");
+			~dirt.soundLibrary.addMIDI(\opsix, ~opsix);
+			~opsix.latency = 0.45;
+		} {
+			"could not add opsix midi destination".postln;
+		}
+		~dirt.soundLibrary.addMIDI(\iacdriver, ~iacDriver);
+		~iacDriver.latency = 0.45;
 	};
 
 	s.latency = 0.3; // increase this if you get "late" messages

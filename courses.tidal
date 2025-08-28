@@ -1,0 +1,101 @@
+d1
+  -- $ degrade
+  $ s "cpu!16"
+  # n (run 16)
+
+--------------------------------------------------------------------------------
+-- https://tidalcycles.org/docs/patternlib/tutorials/course1/
+--------------------------------------------------------------------------------
+
+-- week 2 lesson 1
+d1
+  $ n "0 0 [4 3] 4"
+  # sound "cpu"
+  # crush 4
+  -- # vowel "a e i o u"
+
+-- week 2 lesson 2
+d1
+  $ fast "0.5 2"
+  $ n "0 2 [3 5] [4 7]"
+  # s "cpu"
+
+d2
+  $ n "0(3,8) 8*8"
+  # s "cpu2"
+  # cps "0.3 0.6"
+
+d2 $ n "0 [~ 1] 2*2 3 4*3 5 ~ 7" # sound "cpu2"
+    # cps "<0.5 2> [1 0.75] <2 1>"
+
+d1 $ slow "0.5 <1 2>" $ n "0 2 [3 5] [4 7]" # sound "cpu"
+
+d1 $ slow "0.5 <1 2>" $
+  n "{0 2 [3 5] [4 <7 6>], 0*2 3*3 0}" # sound "cpu"
+  # squiz "<8 1 2>"
+
+d1 $ slow "0.5 <1 2>" $
+    n "{0 2 [3 5] [4 <7 6>], 0*2 3*3 0}" # sound "cpu"
+    # squiz "<8 1 2>"
+    # speed 2
+
+-- week 2 lesson 3
+-- |> is the same as #
+
+d1
+  $ speed "1(3,8) [3 4 7 11] [0.5*2 1.5]"
+  # sound "dsynth"
+  * speed "1 0.5 3"
+
+d1
+  $ hurry "<2 1>"
+  $ n "0 1 0 [2 4] 2 4 1*2 3"
+  # sound "cpu"
+
+d1 $ n "0 1 2 3" # sound "numbers" |> n "4 5"
+
+d1 $ n "0 1 2 3" # sound "numbers" |<| n "4 5"
+
+d1 $ n "0 1 2 3" # sound "numbers" |+ n "4 5"
+
+d1
+  $ every 2 (hurry 4)
+  $ n "0 1 2 3"
+  # sound "numbers"
+  +| n "4 5"
+
+d1 $ n ("7 5 [2 7] 0" |+ "<-12 0 12>") # sound "superpiano"
+
+d1 $ n "0(5,8) [4 1]" # sound "drum"
+  # squiz "0 2 5"
+  + squiz "<0 2 3>"
+
+d1 $ n "[0 4 2] [4 1] 3 [2 0] 3 [3 1] 4 4" # sound "cpu"
+  # squiz 3
+  # speed "1 [2 3] 3"
+  |+ speed (slow 4 saw)
+
+-- week 3 lesson 1
+d1 $ every 2 (hurry 2) $ every 3 (rev) $ fast 2 $ sound "cpu bd sd hh"
+
+-- week 3 lesson 2
+-- I think I already went through cut vs legato when I went
+-- through the "workshop" page
+
+-- week 3 lesson 3
+d1
+  -- $ jux rev
+  $ splice 8 "[0 4 2] [4 1] 3 [2 0] 3 [3 1] 4 4"
+  $ sound "break:4"
+
+d1
+  -- $ slice 8 "[0 4 2] [4 1] 3 [2 0] 3 [3 1] 4 4"
+  $ slice 8 "0 2 [3 5] [4 <7 6>]"
+  $ sound "break"
+  # n (run 16)
+
+hush
+
+setcps 7
+
+setcps 0.4

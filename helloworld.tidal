@@ -1,13 +1,415 @@
+-- basic pattern fuckery
+hush
+
 d1
-  $ n "[0 ~ 4 7, 2!8]"
+  $ n "<0 1 [2 3]> [4 5 <6 7 8>] 9 10 11 <12 13 14 15>"
+  # amp 0.8
   # s "iacdriver"
+  # midichan 0
 
-setcps $ 140 / 60 / 4
+d2
+  $ n "[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 ~!8]/2 [7 6 5 4 3 2 1 0]"
+  # s "iacdriver"
+  # midichan 0
 
+-- messing with euclidean sequences
 d1 $ silence
 
--- long kicks
-d2 $ ccv 100 # ccn 100 # s "iacdriver"
+d1 $ n "0 ~ ~ 0 ~ ~ 0 ~" # s "iacdriver" # midichan 0
 
--- short kicks
-d2 $ ccv 0 # ccn 100 # s "iacdriver"
+d2 $ n "0 ~ ~ 0 ~ ~ 0 ~" # s "iacdriver" # midichan 2
+
+d1
+  $ n "0(5,16)"
+  # s "iacdriver"
+  # midichan 0
+
+d2
+  $ n "12(5,12)/2"
+  # s "iacdriver"
+  # midichan 0
+
+d2 $ s "bd:8(3,8)"
+
+d3
+  $ n "2(7,8)"
+  # s "iacdriver"
+  # amp 0.3
+  # midichan 0
+
+d4
+  $ n "-7(8,9)/4"
+  # s "iacdriver"
+  # midichan 0
+
+-- polymetric sequences
+d1 $ silence
+
+d1
+  $ n "{0 1 2, 8 9 10 11 12}"
+  # s "iacdriver"
+
+-- messing with named patterns
+p "track1" $ silence
+
+p "track1"
+  $ n "0(3,8)"
+  # s "iacdriver"
+  # midichan 0
+
+-- messing with once
+once $ s "bd:5"
+
+-- patterns https://tidalcycles.org/docs/reference/pattern_structure
+d1 $ silence
+
+d1
+  $ n "0 1" + "2 3 4"
+  # "iacdriver"
+
+d1
+  $ n "0 1" + "2 3 4"
+  # "iacdriver"
+
+--------------------------------------------------------------------------------
+-- workshop stuff https://tidalcycles.org/docs/patternlib/tutorials/workshop
+--------------------------------------------------------------------------------
+d1 $ silence
+
+ -- controlling gain of sample playback
+d1 $ sound "bd hh sn:1 hh sn:1 hh" # gain "1 0.7 0.5"
+
+-- controlling sample playback speed with `speed`
+d1 $ sound "numbers:1 numbers:2 numbers:3 numbers:4" # speed "1 1.5 2 0.5"
+
+-- letting `speed` define the pattern
+d1 $ speed "1 2 4" # sound "jungbass:6"
+
+-- `up` transposes a sample by a number of semitones
+d1 $ up "0 ~ 12 24" # sound "jungbass:6"
+
+-- panning a sample in the stereo field
+d1 $ sound "numbers:1 numbers:2 numbers:3 numbers:4" # pan "0 0.5 1"
+
+-- adding distortion with `shape`
+d1 $ sound "kurt:4 kurt:4" # shape "0 0.78" # gain "0.7"
+
+-- delay (I seem to have a SuperCollider issue going on that prevents the delay from working)
+d1 $ sound "cp" # delay 0.8 # delaytime (1/6) # delayfeedback 0.6
+
+-- try some reverb (this works!)
+d1 $ sound "[~ sn]*2" # dry 0.4 # room 0.6 # size 0.8
+
+-- low pass filter
+--d1 $ sound "tabla*4" # n "0 1 2 3" # cutoff 400 # resonance 0.2
+--d1 $ sound "tabla*4" # n "0 1 2 3"
+d1 $ sound "tabla*4" # n "0 1"
+
+-- slow, fast, and hurry
+d1 $ silence
+
+d1 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+d1 $ slow 2 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+d1 $ fast 2 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+d1 $ hurry 2 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- reorganizing patterns
+d1 $ silence
+
+d1 $ rev $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- it's interesting to switch the order of fast and palindrome in this code
+-- If you do fast and then palindrome, then you get up up down down
+-- If you do palindrome and then fast, then you get up down but faster
+-- Makes sense given the what the docs say about palindrome
+-- > The palindrome function applies rev to a pattern every other cycle,
+-- > so that the pattern alternates between forwards and backwards
+d1 $ fast 2 $ palindrome $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- iter starts the pattern at a different point each cycle,
+-- shifting it the given number of times until it gets back to where it started
+d1 $ silence
+
+d1 $ fast 2 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- this will be (a0 a1 a2 a3) (a1 a2 a3 a0) (a2 a3 a0 a1) (a3 a0 a1 a2)
+-- parentheses added for visual effect only
+d1 $ iter 4 $ fast 2 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- every function feels very musically useful!
+-- kind of like adding a fill....
+d1 $ silence
+
+d1 $ every 4 (fast 2) $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- jux applies a function but only to the right channel of the audio
+d1 $ silence
+
+d1 $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+d1 $ jux (rev) $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+d1 $ jux (hurry 2) $ sound "arpy arpy arpy:1 arpy:2"
+
+-- chunk
+d1 $ silence
+
+-- this will apply a transformation to only a part of the pattern
+-- and it will iterate through the subsection of the pattern that
+-- the transformation is applied to each cycle
+-- So in this example, `hurry 2` is applied to the first 1/4 section of the
+-- pattern
+d1 $ chunk 4 (fast 2) $ sound  "arpy arpy:1 arpy:2 arpy:3"
+
+do
+  -- asap $ connectionMax 3 # speedSequenser 4
+  -- d5 $ grid "1 0!15"
+  -- d1 $ chunk 4 (# speed 2) $ sound  "alphabet:0 alphabet:1 alphabet:2 alphabet:3" # connectionN 1
+  d1 $ chunk 4 (# speed 2) $ sound  "alphabet:0 alphabet:1 alphabet:2 alphabet:3"
+
+-- random pattern from the didactic pattern visualizer readme
+hush
+
+do
+  asap $ connectionMax 4 # speedSequenser 4
+  d7 $ grid "1 0!15"
+  d4 $ s "bd:2(3,8)" # connectionN 1
+  d5 $ s "hh(6,8)" # connectionN 2
+  d6 $ s "~ sn:1" # connectionN 4
+  -- d8 $ every 3 ( density 8 ) $ density 2 $ n "<[d4,e2,g2] [d4,e4,g2]>" 
+  -- d3 $ every 3 ( density 8 ) $ n "[d4,e2,g2] [d4,e4,g2]" 
+  -- d3 $ every 2 (density 4) $ n "[d4,e2,g2] [d4,e4,g2] [c4,e2,g2] [c4,e4,g2]" 
+    # s "superfork"  # connectionN 3
+
+-- snippet from CNDSD
+hush
+
+do
+ asap $ connectionMax 5 # speedSequenser 2
+ d5 $ slow 0.5 $ grid "1 0!8" 
+ d1 $ mtrigger 1 $ seqPLoop [
+    (0,8, slow 0.5 $ cat [
+    sometimesBy 0.15 (#crush 6)$ s "[bd(5,9),[superhat(2,9)]/2]"
+    # n "[[2 4],[g5 ,b6 ,a3]]"  # accelerate 0.8 # note "[f5] g2" # gain (slow 2 $ range 0.9 1.2 $ sine) #connectionN 1,
+    sometimesBy 0.25 (# speed "[[1 0.8],[1.5 2]*2]") $ s "[yeah(3,9),notes(7,9)]" # n "[[2][a4 ,d7 g6]b3]" # gain "1.2" #connectionN 2,
+    sound "[print(2,9)]/4" # n "3" # gain "1.2" #room 0.1 #connectionN 3,
+    sound " ~ ~ [sax]/12" # n "2" # gain "1.2" # legato 3 #room 0.5 #connectionN 4,
+    sound "{super808 ~ ~ ~ ~ ~}%1.5" # n "g2" # gain "1.5" # legato 4 #room 1 #connectionN 5] ),
+    (8,24, slow 0.75 $ stack [
+    sometimesBy 0.15 (#crush 6)$ s "[bd(5,9),[superhat(2,9)]/2]"
+    # n "[[2 4],[g5 ,b6 ,a3]]"  # accelerate 0.8 # note "[f5] g2" # gain (slow 2 $ range 0.9 1.2 $ sine) #connectionN 1,
+    sometimesBy 0.25 (# speed "[[1 0.8],[1.5 2]*2]") $ s "[yeah(3,9),notes(7,9)]" # n "[[2][a4 ,d7 g6]b3]" # gain "1.2" #connectionN 2,
+    sound "[print(2,9)]/4" # n "3" # gain "1.2" #room 0.1 #connectionN 3,
+    sound " ~ ~ [sax]/12" # n "2" # gain "1.2" # legato 3 #room 0.5 #connectionN 4,
+    sound "{super808 ~ ~ ~ ~ ~}%1.5" # n "g2" # gain "1.5" # legato 4 #room 1 #connectionN 5] )
+    ]
+
+-- snippet from the `ur` docs
+hush
+
+let pats =
+      [
+        ("a", stack [n "c4 c5 g4 f4 f5 g4 e5 g4" # s "superpiano" # gain "0.7",
+                     n "[c3,g4,c4]" # s "superpiano"# gain "0.7"
+                    ]
+        ),
+        ("b", stack [n "d4 c5 g4 f4 f5 g4 e5 g4" # s "superpiano" # gain "0.7",
+                     n "[d3,a4,d4]" # s "superpiano"# gain "0.7"
+                    ]
+        ),
+        ("c", stack [n "f4 c5 g4 f4 f5 g4 e5 g4" # s "superpiano" # gain "0.7",
+                     n "[f4,c5,f4]" # s "superpiano"# gain "0.7"
+                    ]
+        )
+      ]
+in
+do
+ asap $ connectionMax 5 # speedSequenser 2
+ d2 $ grid "1 0!15" 
+ d1 $ ur 12 "a b c" pats [] # connectionN 1
+
+-- snippet from the seqP docs
+hush
+
+d1 $ qtrigger $ seqP [
+  (0, 12, sound "bd bd*2"),
+  (4, 12, sound "hh*2 [sn cp] cp future*4"),
+  (8, 12, sound (samples "arpy*8" (run 16)))
+]
+
+
+-- chaining transformations together using .
+hush
+
+d1 $ jux (rev . (slow 1.5)) $ sound "arpy arpy:1 arpy:2 arpy:3"
+
+-- rhythm
+d1 $ silence
+
+d1
+  $ jux (rev . (slow 1.5))
+  $ n "-5 -4? -6 -2 -1? 0 1 2"
+  # s "iacdriver"
+  # ccv (slow 2 $ range 0 127 sine)
+  # ccn "102 103"
+  -- # ccv square # ccn 103
+  # midichan "0 1 0 0 1 0 1 0 0 1"
+
+-- kick
+d2
+  $ every 4 (slow 1.25)
+  $ n "0!4"
+  # s "iacdriver"
+  # gain 0.5
+  # midichan 2
+
+-- snare
+d3
+  $ n "~ ~ ~ 0"
+  # s "iacdriver"
+  # midichan 3
+
+-- snippets from the control busses docs
+hush
+
+d1 $ sound "sax" # legato 1 # squizbus 1 "1 2 5 1.5" # lpfbus 2 "400 2000 3000" # lpq 0.2
+
+d1
+  $ s "moog"
+  # n "<0 1 2>"
+  # legato 1
+  # cutoffbus 1 (segment 32 $ range 200 2400 $ saw)
+  # resonance 0.2
+
+-- different kinds of patterns
+hush
+
+d1 $ fast 2 $ palindrome $ n "0..3" # sound "arpy"
+
+d1 $ sound "{voodoo voodoo:3, arpy arpy:4 arpy:2}"
+
+d1 $ sound "[drum bd hh bd, can can:2 can:3 can:4 can:2]"
+
+d1 $ sound "{drum bd hh bd, can can:2 can:3 can:4 can:2}"
+
+d1 $ sound "[bd sn, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5]"
+
+d1 $ sound "{bd ~ ~ ~ sn ~ ~ ~, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5}"
+
+d1 $ sound "bd:4!8"
+
+d1
+  $ sometimes (# speed (1/2))
+  $ sometimes (# speed "4")
+  $ sound "drum*8"
+
+d1
+  $ fast 8
+  $ sound "arpy"
+  # n (irand 16)
+
+d1 $ degradeBy 0.2 $ sound "drum*16"
+
+-- checking out what happens with longer samples
+d1 $ s "bev" # cut 1
+
+d2
+  $ slow 4
+  $ s "pebbles ~"
+  # cut 1
+
+d1 $ sound "bev ~ bev ~" # legato (irand 4) # speed ((rand * 2) + 1)
+
+d1 $ slow 2 $ chop 16 $ sound "bev:1" # legato 2
+
+d1 $ slow 2 $ striate 4 $ sound "bev:1" # legato 2
+
+d1 $ slow 16 $ sound "bev:1"
+
+d1
+  $ every 4 (fast 2)
+  $ fast 8
+  $ randslice 64
+  $ sound "bev"
+  # legato 2
+
+
+d1 $ n "0 4 7" # sound "superpiano"
+
+d1 $ sound "{drum bd:6 hh bd:6, can can:2 can:3 can:4 can:2}"
+
+d1 $ sound "{bd sn, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5}"
+
+-- this is something I should really try to remember because it might confuse me down the road
+-- https://tidalcycles.org/docs/patternlib/tutorials/workshop#difference-between-functions-n-and-note
+
+d1
+  $ every 4 (fast 2)
+  $ sound "arpy*8"
+  # n "<0 4>"
+  # note "0 12 -7 -12 4 -3"
+
+-- playing notes as they are named in western m usic notation
+
+d1 $ fast 2 $ palindrome $ note "c a f e" # s "supermandolin"
+
+d1 $ note "0 9 5 4" # s "supermandolin"
+
+-- transposing/transpose with |-
+d1
+  $ note "c a f e"
+  # s "superpiano"
+  |- note 24
+
+-- playing chords
+d1 $ slow 2 $ n "c'maj'i e'min" # s "supermandolin"
+
+d1 $ n "c'major7'6'iiii" # s "supermandolin"
+
+chordList
+
+-- patterning chords
+d1 $ n ("c e f" |+ "<'maj 'min>") # s "supermandolin"
+
+-- the above is equivalent to
+d1 $ n "<[c'maj e'maj f'maj] [c'min e'min f'min]>" # s "supermandolin"
+
+-- scales
+d1
+  $ jux rev
+  $ chunk 4 (fast 2 . (|- n 12))
+  $ off 0.25 (|+ 7)
+  $ struct (iter 4 "t(5,8)")
+  $ n (scale "ritusen" "0 .. 7")
+  # sound "superpiano"
+
+-- wtf is the off function?
+-- from here https://userbase.tidalcycles.org/off.html
+-- off is similar to superimpose
+-- no idea wtf superimpose does
+-- it applies a function to a pattern ... well yeah!
+-- it layers the result of the function on top of the input pattern
+-- it takes a parameter, which can be a pattern, that
+-- shifts the transformed version of the pattern by
+-- some (potentially fractional) number of cycles
+-- 
+d1 $ off 0.125 (# crush 2) $ sound "bd [~ sn:2] mt lt*2"
+
+-- makes arpeggios by adding offset patterns
+-- that are shifted up the scale
+d1
+  $ n (off 0.25 (+12)
+       -- $ off 0.125 (+7)
+       $ every 4 (chunk 4 (|- 12))
+       $ slow 2 "c(3,8) a(3,8,2) f(3,8) e(3,8,4)") 
+  # s "iacdriver"
+  # midichan 4
+
+hush
+
+panic
+
+setcps $ 175 / 60 / 4
