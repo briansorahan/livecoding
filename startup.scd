@@ -33,9 +33,9 @@ s.reboot { // server options are only updated on reboot
 			~opsix = MIDIOut.newByName("opsix", "Generic USB MIDI Sound");
 			~dirt.soundLibrary.addMIDI(\opsix, ~opsix);
 			~opsix.latency = 0.45;
-		} {
+		} { | error |
 			"could not add opsix midi destination".postln;
-		}
+		};
 		~dirt.soundLibrary.addMIDI(\iacdriver, ~iacDriver);
 		~iacDriver.latency = 0.45;
 	};
