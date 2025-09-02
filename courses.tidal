@@ -94,8 +94,57 @@ d1
   $ sound "break"
   # n (run 16)
 
+--------------------------------------------------------------------------------
+-- week 4 lesson 1
+-- https://tidalcycles.org/docs/patternlib/tutorials/course1#week-4
+--------------------------------------------------------------------------------
+
+d1 $ sound "bd*16" # speed (sine + 0.5)
+
+d1 $ sound "bd*8" # speed 1
+
+-- without segment, there will be no events because a continuous function
+-- like sine doesn't have discrete events
+-- tidal needs a way to determine events
+d1 $ speed (segment 16 $ range 0.5 2.5 sine) # sound "bd:2"
+
+d1 $
+  speed (struct "t f!2 t f!2 t f!3 t f t f!3" $ range 0.5 2.5 sine)
+  # sound "bd"
+  # n (run 7)
+
+d2 $ s "~!4 sn:1 ~!3"
+
+d1
+  $ every 4 (jux rev)
+  $ sound "[bd!3 sn:1]*8"
+  # speed (range 0.5 2.5 saw)
+  # n (slow 3 $ run 7)
+  # room 0.6
+  # sz (slow 8 saw)
+
+d1 $ sound "bd:3*16" # (speed (rand * (1)))
+
+--------------------------------------------------------------------------------
+-- week 4 lesson 2, random marathon (using more randomness in tidal)
+-- https://tidalcycles.org/docs/patternlib/tutorials/course1#week-4
+--------------------------------------------------------------------------------
+
+resetCycles
+
+d1
+  $ repeatCycles 4
+  $ n "0*8"
+  # sound "cpu"
+  # speed (rand + 1)
+
+-- irand
+d1
+  $ n (struct "t(5,8)" $ (irand 8) + 24)
+  # sound "rash"
+
 hush
 
 setcps 7
 
-setcps 0.4
+setcps (150 / 60 / 4)
