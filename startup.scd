@@ -28,7 +28,13 @@ s.reboot { // server options are only updated on reboot
 		// setup virtal MIDI bus (mac os x)
 		MIDIClient.init;
 
-		~iacDriver = MIDIOut.newByName("IAC Driver", "Bus 1");
+		try {
+		        ~iacDriver = MIDIOut.newByName("IAC Driver", "Bus 1");
+			~dirt.soundLibrary.addMIDI(\iacdriver, ~iacDriver);
+             		~iacDriver.latency = 0.45;
+		} { | error |
+			"could not add iacdriver midi destination".postln;
+		};
 		try {
 			~opsix = MIDIOut.newByName("opsix", "Generic USB MIDI Sound");
 			~dirt.soundLibrary.addMIDI(\opsix, ~opsix);
@@ -36,10 +42,8 @@ s.reboot { // server options are only updated on reboot
 		} { | error |
 			"could not add opsix midi destination".postln;
 		};
-		~dirt.soundLibrary.addMIDI(\iacdriver, ~iacDriver);
-		~iacDriver.latency = 0.45;
 	};
 
-	s.latency = 0.3; // increase this if you get "late" messages
+	s.latency = 0.5; // increase this if you get "late" messages
 };
 );

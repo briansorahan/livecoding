@@ -266,11 +266,15 @@ d2
   # gain 0.5
   # midichan 2
 
+d2 $ silence
+
 -- snare
 d3
   $ n "~ ~ ~ 0"
   # s "iacdriver"
   # midichan 3
+
+d3 $ silence
 
 -- snippets from the control busses docs
 hush
